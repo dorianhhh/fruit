@@ -1,0 +1,1833 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Etiquetage magasin — Guide Rapide</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg: #0f1a0f;
+  --surface: #1a2e1a;
+  --surface2: #223322;
+  --green: #4caf6e;
+  --green-bright: #6ddc90;
+  --red: #e05252;
+  --yellow: #f0c040;
+  --blue: #5b9bd5;
+  --text: #e8f0e8;
+  --muted: #8aab8a;
+  --border: #2d4a2d;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: 'Barlow', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 12px;
+}
+
+header {
+  text-align: center;
+  padding: 16px 0 20px;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 16px;
+}
+
+h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.4rem;
+  color: var(--green-bright);
+  letter-spacing: 3px;
+  line-height: 1;
+}
+
+.subtitle {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* SEARCH */
+.search-wrap {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+#search {
+  width: 100%;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px 12px 42px;
+  font-size: 1rem;
+  font-family: 'Barlow', sans-serif;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+#search:focus { border-color: var(--green); }
+#search::placeholder { color: var(--muted); }
+
+.search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  font-size: 1.1rem;
+  pointer-events: none;
+}
+
+/* TABS */
+.tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar { display: none; }
+
+.tab {
+  flex-shrink: 0;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tab.active {
+  background: var(--green);
+  border-color: var(--green);
+  color: #0f1a0f;
+}
+
+/* PRODUCT LIST */
+.product-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.product-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.product-card:hover { border-color: var(--green); }
+
+.product-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.product-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.15rem;
+  letter-spacing: 1.5px;
+  color: var(--green-bright);
+}
+
+.product-tags {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+
+.chip {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.chip-v { background: #1e3d2a; color: #6ddc90; }   /* variété */
+.chip-c { background: #3d2e1e; color: #f0c040; }   /* couleur */
+.chip-t { background: #3d1e1e; color: #e05252; }   /* traitement */
+.chip-k { background: #1e2a3d; color: #5b9bd5; }   /* calibre */
+.chip-cat { background: #2d1e3d; color: #c07aff; } /* catégorie */
+.chip-igp { background: #3d3a1e; color: #e8c86e; } /* label */
+
+.chevron {
+  color: var(--muted);
+  font-size: 0.9rem;
+  transition: transform 0.2s;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
+.product-card.open .chevron { transform: rotate(180deg); }
+
+.product-body {
+  display: none;
+  padding: 0 14px 12px;
+  border-top: 1px solid var(--border);
+  margin-top: 0;
+}
+
+.product-card.open .product-body { display: block; }
+
+.detail-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  align-items: flex-start;
+}
+
+.detail-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  min-width: 80px;
+  padding-top: 1px;
+}
+
+.detail-value {
+  font-size: 0.85rem;
+  color: var(--text);
+  flex: 1;
+  line-height: 1.4;
+}
+
+.detail-value.highlight {
+  color: var(--yellow);
+  font-weight: 600;
+}
+
+.label-tag {
+  display: inline-block;
+  background: #3d3a1e;
+  color: #e8c86e;
+  border-radius: 5px;
+  padding: 1px 7px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin: 2px 2px 0 0;
+}
+
+/* LEGEND */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding: 10px 12px;
+  background: var(--surface);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+/* COUNT */
+.count-bar {
+  text-align: right;
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+#count { color: var(--green-bright); font-weight: 700; }
+
+/* HIDDEN */
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🥦 etiquettage flegs</h1>
+  <div class="subtitle">Guide étiquetage rapide — Fruits &amp; Légumes</div>
+</header>
+
+<div class="search-wrap">
+  <span class="search-icon">🔍</span>
+  <input type="text" id="search" placeholder="Rechercher un produit..." autocomplete="off" autocorrect="off">
+</div>
+
+<div class="tabs">
+  <div class="tab active" data-filter="all">Tous</div>
+  <div class="tab" data-filter="fruits">🍑 Fruits</div>
+  <div class="tab" data-filter="legumes">🥕 Légumes</div>
+  <div class="tab" data-filter="label">🏷️ Label/IGP</div>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><span class="chip chip-v">V</span> Variété</div>
+  <div class="legend-item"><span class="chip chip-c">C</span> Couleur</div>
+  <div class="legend-item"><span class="chip chip-t">T</span> Traitement</div>
+  <div class="legend-item"><span class="chip chip-k">K</span> Calibre</div>
+  <div class="legend-item"><span class="chip chip-cat">Cat</span> Catégorie</div>
+  <div class="legend-item"><span class="chip chip-igp">IGP</span> Label</div>
+</div>
+
+<div class="count-bar">Affichage : <span id="count">0</span> produits</div>
+
+<div class="product-list" id="list"></div>
+
+<script>
+const products = [
+  // ===== FRUITS =====
+  {
+    name: "ABRICOT", cat: "fruits",
+    variete: "Vrac Obligatoire si cat Extra ou 1",
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "optionnel",
+    notes: null,
+    labels: ["Abricot Rouge du Roussillon AOP"]
+  },
+  {
+    name: "AIL", cat: "legumes",
+    variete: null,
+    couleur: "Préciser si noir + mention 'fumé' le cas échéant",
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: ["Ail blanc de Lomagne IGP","Ail fumé d'Arleux IGP","Ail rose de Lautrec IGP","Ail Violet de Cadours AOP"]
+  },
+  {
+    name: "AIL FRAIS", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "AMANDE FRAÎCHE", cat: "fruits",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "AMANDE SÈCHE", cat: "fruits",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "ANANAS EXTRA SWEET", cat: "fruits",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: "Cueilli à maturité",
+    labels: ["Ananas Victoria Réunion Label Rouge"]
+  },
+  {
+    name: "ANANAS AUTRE", cat: "fruits",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+ 
+  {
+    name: "ARTICHAUT", cat: "legumes",
+    variete: "oui uniquement en cat extra",
+    couleur: "optionnel",
+    calibre: null,
+    traitement: null,
+    categorie: "optonnel",
+    notes:" detail nom Préciser si poivrade ou bouquet + couleur",
+    labels: []
+  },
+  {
+    name: "ASPERGE", cat: "legumes",
+    variete: null,
+    couleur: "option",
+    calibre: null,
+    traitement: null,
+    categorie: "option",
+    notes: null,
+    labels: ["Asperge des sables des Landes IGP","Asperge du Blayais IGP"]
+  },
+  {
+    name: "AUBERGINE", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "AVOCAT", cat: "fruits",
+    variete: "Oui",
+    couleur: "Oui",
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: "Mûr à point",
+    labels: []
+  },
+  {
+    name: "AVOCAT TROPICAL", cat: "fruits",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "BANANE", cat: "fruits",
+    variete: "Variété obligatoire si DOM",
+    couleur: "Préciser si banane verte",
+    calibre: "Obligatoire",
+    traitement: null,
+    categorie: "Obligatoire",
+    notes: "pour les dom il faut préciser le département origine",
+    labels: []
+  },
+  {
+    name: "BANANE FRECINETTE", cat: "fruits",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "BANANE ROSE", cat: "fruits",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "BANANE PLANTAIN", cat: "fruits",
+    variete: null,
+    couleur: "Préciser si verte et jaune à la fois",
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "BASILIC", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "BATAVIA", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "BETTERAVE", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: ["Betterave rouge Label Rouge"]
+  },
+  {
+    name: "BLANC DE POIREAU", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "BOUQUET GARNI", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "BROCOLI", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "CANNE À SUCRE", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "CARAMBOLE", cat: "fruits",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "CAROTTE", cat: "legumes",
+    variete: null,
+    couleur: "Préciser si non orange",
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: "'Non lavée' si c'est le cas",
+    labels: ["Carotte Label Rouge","Carotte des sables Label Rouge","Poireau des sables Label Rouge"]
+  },
+  {
+    name: "CAROTTE BOTTE", cat: "legumes",
+    variete: null,
+    couleur: "Couleur si non orange",
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "CÉLERI BRANCHE", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: "Préciser si 'coupé' et 'doré'",
+    labels: []
+  },
+  {
+    name: "CÉLERI RAVE", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "CERISE", cat: "fruits",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "CERFEUIL", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "CERFEUIL TUBÉREUX", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "CHAMPIGNON DE PARIS", cat: "legumes",
+    variete: "Obligatoire (si besoin de gamme)",
+    couleur: "Préciser Blanc ou Brun",
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: "Informer le consommateur de la nécessité d'une cuisson complète avant consommation",
+    labels: []
+  },
+  {
+    name: "CHAMPIGNON AUTRES", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: "Idem info cuisson si nécessaire",
+    labels: ["Marron d'Ardèche AOP"]
+  },
+  {
+    name: "CHÂTAIGNE", cat: "fruits",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "CHAYOTTE", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "CHOU CHINOIS", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "CHOU RAVE", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "CHOU FLEUR", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "CHOU FRISÉ", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "CHOU PAK CHOI", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "CHOU DE BRUXELLES", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "CHOU ROMANESCO", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "CHOUCROUTE", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "CHOUDOU", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "CIBOULE / CIBOULETTE", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "CITRON", cat: "fruits",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: "Obligatoire (écrire en toutes lettres)",
+    categorie: "Obligatoire réglementaire",
+    notes: "Préciser si citron FEUILLE",
+    labels: ["Citron de Menton IGP"]
+  },
+  {
+    name: "CLÉMENTINE", cat: "fruits",
+    variete: "Préciser si clémentine feuille",
+    couleur: null,
+    calibre: null,
+    traitement: "Obligatoire (écrire en toutes lettres)",
+    categorie: "Obligatoire réglementaire",
+    notes: null,
+    labels: ["Clémentine de Corse IGP","Clémentine de Corse Label Rouge"]
+  },
+  {
+    name: "CŒUR DE LAITUE", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Obligatoire réglementaire",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "COING", cat: "fruits",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "CONCOMBRE", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: "Préciser 'Noa' le cas échéant",
+    labels: []
+  },
+  {
+    name: "CORIANDRE", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "CÔTE DE BLETTE", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "COURGE", cat: "legumes",
+    variete: null,
+    couleur: "Préciser si jaune",
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "COURGETTE", cat: "legumes",
+    variete: null,
+    couleur: "Préciser si jaune",
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "COURGETTE RONDE", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "CRESSON", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "CURCUMA", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "DATTE", cat: "fruits",
+    variete: "Oui si Medjoul",
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: "Préciser 'Medjoul' le cas échéant",
+    labels: []
+  },
+  {
+    name: "ÉCHALOTE", cat: "legumes",
+    variete: "Oui — 'longue' ou 'demi-longue', 'traditionnelle' ou 'issue de semis'",
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Obligatoire réglementaire",
+    notes: null,
+    labels: ["Échalote d'Anjou IGP"]
+  },
+  {
+    name: "ENDIVE", cat: "legumes",
+    variete: "Préciser variété si catégorie Extra",
+    couleur: "Préciser si rouge",
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: ["Endive Pleine Terre Label Rouge"]
+  },
+  {
+    name: "ÉPINARD", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "FENOUIL", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "FEUILLE DE CHÊNE", cat: "legumes",
+    variete: null,
+    couleur: "Préciser si blonde ou rouge",
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "FÈVE", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "FIGUE", cat: "fruits",
+    variete: "Préciser variété si catégorie extra + verte le cas échéant",
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: ["Figue de Solliès AOP"]
+  },
+  {
+    name: "FRAISE", cat: "fruits",
+    variete: "Oui pour les variétés principales",
+    couleur: "Pas violette",
+    calibre: null,
+    traitement: null,
+    categorie: "Oui pour catégorie extra",
+    notes: "Cueilli à maturité",
+    labels: ["Fraise du Périgord IGP","Fraise de Nîmes IGP","Fraise de Carpentras Marque Déposée"]
+  },
+  {
+    name: "FRAMBOISE", cat: "fruits",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "FRUIT DE LA PASSION", cat: "fruits",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "GOMBO", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "GOYAVE", cat: "fruits",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "GRENADE", cat: "fruits",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "GRENADILLE", cat: "fruits",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "GROSEILLE", cat: "fruits",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "HARICOT", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "HARICOT VERT", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: "Préciser si fin ou très fin",
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "HÉLIANT", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "ICITCHUE ICEBERG", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "IGNAME", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "KAKI", cat: "fruits",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "KIWI", cat: "fruits",
+    variete: "Obligatoire",
+    couleur: null,
+    calibre: "Oui",
+    traitement: null,
+    categorie: "Obligatoire",
+    notes: "Préciser 'jaune' si kiwi jaune",
+    labels: ["Kiwi de Corse IGP","Kiwi de l'Adour IGP","Kiwi Label Rouge"]
+  },
+  {
+    name: "KUMQUAT", cat: "fruits",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "LAITUE", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: "Oui",
+    traitement: null,
+    categorie: "Oui",
+    notes: "Type commercial : juste 'laitue'",
+    labels: []
+  },
+  {
+    name: "LIME", cat: "fruits",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: "Obligatoire (écrire en toutes lettres)",
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "LITCHI", cat: "fruits",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: ["Litchi de la Réunion Label Rouge"]
+  },
+  {
+    name: "MAÏS", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "MÂCHE", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "MANDARINE", cat: "fruits",
+    variete: "Obligatoire",
+    couleur: null,
+    calibre: null,
+    traitement: "Obligatoire (écrire en toutes lettres)",
+    categorie: "Obligatoire réglementaire",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "MANGOUSTAN", cat: "fruits",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "MANGUE", cat: "fruits",
+    variete: "Obligatoire",
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: "Cueilli à maturité / Mûr à point",
+    labels: ["Mangue de Guadeloupe IGP"]
+  },
+  {
+    name: "MANIOC", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "MELON", cat: "fruits",
+    variete: "Obligatoire (charentais jaune, charentais vert, gallia, galia, etc.)",
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: "Cueilli à maturité / Mûr à point",
+    labels: ["Melon de Guadeloupe IGP","Melon du Haut Poitou IGP","Melon du Quercy IGP","Melon France Label Rouge"]
+  },
+  {
+    name: "MENTHE", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "MINCLAS", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "MÛRE", cat: "fruits",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "MYRTILLE", cat: "fruits",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "NAVET", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: "Préciser la forme si non rond",
+    labels: []
+  },
+  {
+    name: "NECTARINE", cat: "fruits",
+    variete: null,
+    couleur: "Obligatoire",
+    calibre: "Oui",
+    traitement: null,
+    categorie: "Oui",
+    notes: "Cueilli à maturité",
+    labels: ["Nectarine France Label Rouge","Nectarines de Corbière IGP"]
+  },
+  {
+    name: "NECTARINE PLATE", cat: "fruits",
+    variete: null,
+    couleur: "Obligatoire",
+    calibre: "Oui",
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "NÈFLE", cat: "fruits",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "NOISETTE", cat: "fruits",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: ["Noisettes de Cervione IGP"]
+  },
+  {
+    name: "NOIX", cat: "fruits",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: ["Noix de Grenoble AOP","Noix du Périgord AOP"]
+  },
+  {
+    name: "NOIX DE COCO", cat: "fruits",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "NOIX FRAÎCHE", cat: "fruits",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "OCA", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "OIGNON", cat: "legumes",
+    variete: null,
+    couleur: "Préciser si jaune ou blanc",
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: ["Oignon Doux des Cévennes AOP","Oignon de Roscoff AOP"]
+  },
+  {
+    name: "ORANGE", cat: "fruits",
+    variete: "Obligatoire",
+    couleur: null,
+    calibre: "Oui",
+    traitement: "Obligatoire (écrire en toutes lettres)",
+    categorie: "Obligatoire réglementaire",
+    notes: "Préciser si FEUILLE",
+    labels: ["Orange Feuilles Citrons de Mygnes IGP (Portugal)","Orange sanguine de Sicile IGP (inclus les variétés Moro, Tarocco, Sanguinello)"]
+  },
+  {
+    name: "ORIGAN", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: "'à jus', 'à dessert' le cas échéant",
+    labels: []
+  },
+  {
+    name: "OSEILLE", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "PAPAYE", cat: "fruits",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "PASTÈQUE", cat: "fruits",
+    variete: null,
+    couleur: "Préciser si non rouge",
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "PATATE DOUCE", cat: "legumes",
+    variete: null,
+    couleur: "Obligatoire",
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "PÊCHE", cat: "fruits",
+    variete: null,
+    couleur: "Obligatoire",
+    calibre: "Oui",
+    traitement: null,
+    categorie: "Oui",
+    notes: "Cueilli à maturité",
+    labels: ["Pêche France Label Rouge"]
+  },
+  {
+    name: "PÊCHE PLATE", cat: "fruits",
+    variete: null,
+    couleur: "Obligatoire",
+    calibre: "Oui",
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "PÊCHE DE VIGNE", cat: "fruits",
+    variete: null,
+    couleur: null,
+    calibre: "Oui",
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "PERSI / PERSIL", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "PETIT POIS", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "PHYSALIS", cat: "fruits",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "PIMENT", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui (réglementaire)",
+    notes: "Degré de force : doux / moyen / fort / sans fort",
+    labels: ["Piment d'Espelette AOP"]
+  },
+  {
+    name: "PITAYA", cat: "fruits",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "POIRE", cat: "fruits",
+    variete: "Obligatoire",
+    couleur: null,
+    calibre: "Oui",
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "POIREAU", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui (réglementaire)",
+    notes: null,
+    labels: ["Poireau des Sables IGP","Poireau des sables Label Rouge"]
+  },
+  {
+    name: "POIVRON", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: "Oui (si présent)",
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "POMELO / PAMPLEMOUSSE", cat: "fruits",
+    variete: null,
+    couleur: "Obligatoire",
+    calibre: "Oui",
+    traitement: "Obligatoire (écrire en toutes lettres)",
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "POMELO CHINOIS", cat: "fruits",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "POMELO UGLY", cat: "fruits",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "POMME", cat: "fruits",
+    variete: "Obligatoire",
+    couleur: null,
+    calibre: "Oui",
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "PDT (POMME DE TERRE)", cat: "legumes",
+    variete: "Obligatoire",
+    couleur: "Préciser si autre couleur que blond",
+    calibre: "Obligatoire",
+    traitement: "Obligatoire (écrire en toutes lettres + Cire)",
+    categorie: "Oui",
+    notes: "Chair ferme si c'est le cas + Conso ou Primeur. PDT : tout mettre !",
+    labels: ["Pomme de terre de l'Île de Ré AOP","Pomme de terre de Noirmoutier AOP","Pomme de terre de l'Île d'Oléron AOP","Pomme de terre Île de Ré Label Rouge","Pomme de terre Île de Noirmoutier AOP","Pomme de terre Label Rouge","Pomme des terres Label Rouge"]
+  },
+  {
+    name: "PDT PRIMEUR", cat: "legumes",
+    variete: "Obligatoire",
+    couleur: "Oui si non blanche",
+    calibre: "Obligatoire réglementaire",
+    traitement: "Obligatoire si c'est le cas (primeur : traitement après récolte)",
+    categorie: "Oui",
+    notes: "'Primeur' obligatoire",
+    labels: []
+  },
+  {
+    name: "PDT CONSO GRENAILLE", cat: "legumes",
+    variete: "Obligatoire réglementaire",
+    couleur: "Oui si non blanche",
+    calibre: "Obligatoire réglementaire",
+    traitement: "Obligatoire si c'est le cas",
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "PDT CONSO À CHAIR FERME", cat: "legumes",
+    variete: "Obligatoire réglementaire",
+    couleur: "Oui si non blanche",
+    calibre: "Obligatoire réglementaire",
+    traitement: "Obligatoire si c'est le cas",
+    categorie: "Oui",
+    notes: "'Chair ferme' obligatoire",
+    labels: []
+  },
+  {
+    name: "PRUNE", cat: "fruits",
+    variete: "Obligatoire",
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: ["Pruneaux d'Agen IGP","Pruneaux d'Agen Label Rouge","Raisin de Marmande AOP","Bigarreaux de Lorraine IGP","Mirabelle de Metz AOP","Mirabelle de Lorraine IGP (Belle/hauts/basse Variétés)"]
+  },
+  {
+    name: "RADIS", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "RAISIN", cat: "fruits",
+    variete: "Obligatoire",
+    couleur: null,
+    calibre: "Oui",
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "ROQUETTE", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "RHUBARBE", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "SALADES (général)", cat: "legumes",
+    variete: "Type commercial seulement : 'laitue' ou 'feuille de chêne'",
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "SCAROLE", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: "Oui",
+    traitement: null,
+    categorie: "Oui",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "TOMATE ALLONGÉE", cat: "legumes",
+    variete: null,
+    couleur: "Préciser si non rouge",
+    calibre: "Oui",
+    traitement: null,
+    categorie: "Obligatoire réglementaire",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "TOMATE CERISE", cat: "legumes",
+    variete: null,
+    couleur: "Préciser si non rouge",
+    calibre: "Oui",
+    traitement: null,
+    categorie: "Obligatoire réglementaire",
+    notes: null,
+    labels: []
+  },
+  {
+    name: "TOMATE COCKTAIL", cat: "legumes",
+    variete: null,
+    couleur: "Préciser si non rouge",
+    calibre: "Oui",
+    traitement: null,
+    categorie: "Obligatoire réglementaire",
+    notes: "Préciser si Pleine Terre",
+    labels: []
+  },
+  {
+    name: "TOMATE RONDE", cat: "legumes",
+    variete: null,
+    couleur: "Préciser si non rouge",
+    calibre: "Oui",
+    traitement: null,
+    categorie: "Obligatoire réglementaire",
+    notes: "Préciser si Pleine Terre",
+    labels: []
+  },
+  {
+    name: "TOPINAMBOUR", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "THYM", cat: "legumes",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+  {
+    name: "VITANGA / PITTANGA", cat: "fruits",
+    variete: null,
+    couleur: null,
+    calibre: null,
+    traitement: null,
+    categorie: null,
+    notes: null,
+    labels: []
+  },
+];
+
+// Build chips for a product
+function buildChips(p) {
+  let chips = '';
+  if (p.variete) chips += '<span class="chip chip-v">V</span>';
+  if (p.couleur) chips += '<span class="chip chip-c">C</span>';
+  if (p.traitement) chips += '<span class="chip chip-t">T</span>';
+  if (p.calibre) chips += '<span class="chip chip-k">K</span>';
+  if (p.categorie) chips += '<span class="chip chip-cat">Cat</span>';
+  if (p.labels && p.labels.length > 0) chips += '<span class="chip chip-igp">IGP</span>';
+  return chips;
+}
+
+function renderProduct(p) {
+  const chips = buildChips(p);
+  let body = '';
+  if (p.variete) body += `<div class="detail-row"><div class="detail-label">🌿 Variété</div><div class="detail-value highlight">${p.variete}</div></div>`;
+  if (p.couleur) body += `<div class="detail-row"><div class="detail-label">🎨 Couleur</div><div class="detail-value highlight">${p.couleur}</div></div>`;
+  if (p.traitement) body += `<div class="detail-row"><div class="detail-label">⚠️ Traitement</div><div class="detail-value" style="color:var(--red);font-weight:600">${p.traitement}</div></div>`;
+  if (p.calibre) body += `<div class="detail-row"><div class="detail-label">📏 Calibre</div><div class="detail-value">${p.calibre}</div></div>`;
+  if (p.categorie) body += `<div class="detail-row"><div class="detail-label">🏷 Catégorie</div><div class="detail-value">${p.categorie}</div></div>`;
+  if (p.notes) body += `<div class="detail-row"><div class="detail-label">📝 Note</div><div class="detail-value" style="color:var(--yellow)">${p.notes}</div></div>`;
+  if (p.labels && p.labels.length > 0) {
+    const lbls = p.labels.map(l => `<span class="label-tag">${l}</span>`).join('');
+    body += `<div class="detail-row"><div class="detail-label">🥇 Labels</div><div class="detail-value">${lbls}</div></div>`;
+  }
+
+  return `
+    <div class="product-card" data-cat="${p.cat}" data-name="${p.name.toLowerCase()}">
+      <div class="product-header" onclick="toggle(this)">
+        <div>
+          <div class="product-name">${p.name}</div>
+          <div class="product-tags">${chips || '<span style="font-size:0.75rem;color:var(--muted)">Origine + Prix uniquement</span>'}</div>
+        </div>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="product-body">${body || '<div style="color:var(--muted);font-size:0.85rem;padding-top:4px">✅ Origine + Prix obligatoires — rien d\'autre requis.</div>'}</div>
+    </div>
+  `;
+}
+
+const list = document.getElementById('list');
+const countEl = document.getElementById('count');
+
+function renderAll(filter = 'all', query = '') {
+  const q = query.trim().toLowerCase();
+  let html = '';
+  let count = 0;
+  products.forEach(p => {
+    const matchFilter = filter === 'all' || p.cat === filter || (filter === 'label' && p.labels && p.labels.length > 0);
+    const matchQuery = !q || p.name.toLowerCase().includes(q);
+    if (matchFilter && matchQuery) {
+      html += renderProduct(p);
+      count++;
+    }
+  });
+  list.innerHTML = html || '<div style="text-align:center;color:var(--muted);padding:32px">Aucun produit trouvé</div>';
+  countEl.textContent = count;
+}
+
+function toggle(header) {
+  const card = header.closest('.product-card');
+  card.classList.toggle('open');
+}
+
+let currentFilter = 'all';
+let currentQuery = '';
+
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentFilter = tab.dataset.filter;
+    renderAll(currentFilter, currentQuery);
+  });
+});
+
+document.getElementById('search').addEventListener('input', e => {
+  currentQuery = e.target.value;
+  renderAll(currentFilter, currentQuery);
+});
+
+// Initial render
+renderAll();
+</script>
+</body>
+</html>
